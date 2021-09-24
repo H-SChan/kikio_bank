@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpClientErrorException.class)
     public ResponseEntity<Response> httpClientErrorExceptionHandler(HttpClientErrorException e) {
         log.warn("httpClientErrorExceptionHandler()");
+        log.warn(e.getStatusCode().toString() + " " + e.getMessage());
         Response response = new Response(e.getStatusCode(), e.getMessage());
         return new ResponseEntity<>(response, e.getStatusCode());
     }
