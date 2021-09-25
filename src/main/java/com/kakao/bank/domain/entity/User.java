@@ -1,9 +1,13 @@
 package com.kakao.bank.domain.entity;
 
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
+@Builder
+@NoArgsConstructor
 @Getter
 @Entity
 public class User {
@@ -18,6 +22,10 @@ public class User {
     // 비밀번호
     @Column
     private String password;
+
+    // 이메일
+    @Column
+    private String email;
 
     // 전화번호
     @Column
