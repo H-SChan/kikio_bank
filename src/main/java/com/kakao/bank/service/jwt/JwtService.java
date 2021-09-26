@@ -7,5 +7,5 @@ public interface JwtService {
     String createToken(String id);
 
     @Transactional(readOnly = true)
-    User validToken(String token);
+    String validToken(String token);
 }

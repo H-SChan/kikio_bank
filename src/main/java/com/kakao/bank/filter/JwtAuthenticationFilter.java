@@ -43,9 +43,9 @@ public class JwtAuthenticationFilter implements Filter {
                 if (StringUtils.isEmpty(token)) {
                     throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "검증 오류");
                 }
-                User user = jwtService.validToken(token);
+                String userId = jwtService.validToken(token);
 
-                request.setAttribute("user", user);
+                request.setAttribute("userId", userId);
             }
 
             chain.doFilter(request, response);

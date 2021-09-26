@@ -62,7 +62,7 @@ public class JwtServiceImpl implements JwtService{
      */
     @Override
     @Transactional(readOnly = true)
-    public User validToken(String token) {
+    public String validToken(String token) {
         try {
             byte[] byteKey = DatatypeConverter.parseBase64Binary(accessKey);
             Key signInKey = new SecretKeySpec(byteKey, signatureAlgorithm.getJcaName());
@@ -74,7 +74,7 @@ public class JwtServiceImpl implements JwtService{
                     .getBody();
             return userRepo.findById(claims.get("id").toString()).orElseThrow(
                     () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "유저 없음")
-            );
+            ).getId();
         } catch (ExpiredJwtException e) {
             throw new HttpClientErrorException(HttpStatus.GONE, "토큰 만료");
         } catch (SignatureException | MalformedJwtException e) {
