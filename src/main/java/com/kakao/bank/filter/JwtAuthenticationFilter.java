@@ -1,6 +1,5 @@
 package com.kakao.bank.filter;
 
-import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.lib.AuthorizationExtractor;
 import com.kakao.bank.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;

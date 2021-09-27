@@ -7,6 +7,7 @@ import com.kakao.bank.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
 @RequiredArgsConstructor
@@ -21,6 +22,7 @@ public class AuthServiceImpl implements AuthService{
      * @return token
      */
     @Override
+    @Transactional(readOnly = true)
     public String login(String id, String password) {
         if (Boolean.TRUE.equals(validIdAndPassword(id, password))) {
             return jwtService.createToken(id);
@@ -34,6 +36,7 @@ public class AuthServiceImpl implements AuthService{
      * @return {@code ture} / {@code false}
      */
     @Override
+    @Transactional(readOnly = true)
     public Boolean validIdAndPassword(String id, String password) {
         User user = userRepo.findById(id).orElseThrow(
                 () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없음")
@@ -41,7 +44,11 @@ public class AuthServiceImpl implements AuthService{
         return user.getPassword().equals(password);
     }
 
+    /**
+     * 회원가입
+     */
     @Override
+    @Transactional(readOnly = true)
     public void register(RegisterReqDto registerReqDto) {
         userRepo.save(registerReqDto.toEntity());
     }
@@ -51,6 +58,7 @@ public class AuthServiceImpl implements AuthService{
      * @return {@code true} / {@code false}
      */
     @Override
+    @Transactional(readOnly = true)
     public Boolean duplicateIdVerification(String id) {
         return userRepo.findById(id).isEmpty();
     }
