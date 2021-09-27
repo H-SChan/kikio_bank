@@ -23,6 +23,10 @@ public class AuthController {
 
     private final AuthService authService;
 
+    /**
+     * 회원가입
+     * @return httpCode, message
+     */
     @PostMapping("/register")
     public Response register(@RequestBody RegisterReqDto registerReqDto) {
         authService.register(registerReqDto);
@@ -30,6 +34,10 @@ public class AuthController {
         return new Response(HttpStatus.OK, "회원가입 완료");
     }
 
+    /**
+     * 아이디 중복 확인
+     * @return httpCode, message, boolean
+     */
     @PostMapping("/available/id")
     public ResponseData<Map<String, Boolean>> availableId(String id) {
         Map<String, Boolean> data = new HashMap<>();
@@ -44,6 +52,10 @@ public class AuthController {
         }
     }
 
+    /**
+     * 로그인
+     * @return httpCode, message, token
+     */
     @PostMapping("/login")
     public ResponseData<LoginRo> login(@RequestBody LoginReq loginReq) {
         String token = authService.login(loginReq.getId(), loginReq.getPassword());
