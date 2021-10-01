@@ -52,4 +52,8 @@ public class User {
     // 간편 인증 번호
     @Column
     private Integer simpleNumber;
+
+    public void setProfileImg(String profileImg) {
+        this.profileImg = profileImg;
+    }
 }
