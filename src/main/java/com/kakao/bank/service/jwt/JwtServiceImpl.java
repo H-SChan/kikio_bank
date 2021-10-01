@@ -58,7 +58,7 @@ public class JwtServiceImpl implements JwtService{
 
     /**
      * 토큰 유효 검증
-     * @return user
+     * @return userId
      */
     @Override
     @Transactional(readOnly = true)
