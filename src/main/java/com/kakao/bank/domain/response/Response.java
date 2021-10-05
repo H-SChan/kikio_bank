@@ -6,10 +6,10 @@ import org.springframework.http.HttpStatus;
 @Setter
 public class Response {
     private HttpStatus status;
-    private String massage;
+    private String message;
 
-    public Response(HttpStatus status, String massage) {
+    public Response(HttpStatus status, String message) {
         this.status = status;
-        this.massage = massage;
+        this.message = message;
     }
 }
