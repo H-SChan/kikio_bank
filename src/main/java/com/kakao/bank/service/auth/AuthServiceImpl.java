@@ -62,4 +62,16 @@ public class AuthServiceImpl implements AuthService{
     public Boolean duplicateIdVerification(String id) {
         return userRepo.findById(id).isEmpty();
     }
+
+    /**
+     * 간편 로그인 비밀번호 저장
+     */
+    @Override
+    @Transactional
+    public void storeSimpleLoginPassword(int simplePassword) {
+        User user = User.builder()
+                .simpleNumber(simplePassword)
+                .build();
+        userRepo.save(user);
+    }
 }

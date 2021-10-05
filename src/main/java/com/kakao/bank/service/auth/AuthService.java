@@ -1,6 +1,7 @@
 package com.kakao.bank.service.auth;
 
 import com.kakao.bank.domain.dto.auth.request.RegisterReqDto;
+import org.springframework.transaction.annotation.Transactional;
 
 public interface AuthService {
     String login(String id, String password);
@@ -10,4 +11,7 @@ public interface AuthService {
     void register(RegisterReqDto registerReqDto);
 
     Boolean duplicateIdVerification(String id);
+
+    @Transactional
+    void storeSimpleLoginPassword(int simplePassword);
 }

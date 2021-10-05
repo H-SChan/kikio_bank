@@ -2,6 +2,7 @@ package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.auth.request.LoginReq;
 import com.kakao.bank.domain.dto.auth.request.RegisterReqDto;
+import com.kakao.bank.domain.dto.auth.request.SimplePassword;
 import com.kakao.bank.domain.dto.auth.response.LoginRo;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.ResponseData;
@@ -62,5 +63,16 @@ public class AuthController {
         LoginRo data = new LoginRo(token);
 
         return new ResponseData<>(HttpStatus.OK, "로그인 성공", data);
+    }
+
+    /**
+     * 간편 로그인 비밀번호 설정
+     * @return httpCode, message
+     */
+    @PostMapping("/simple/pw")
+    public Response storeSimpleLoginPassword(@RequestBody SimplePassword simplePassword) {
+        authService.storeSimpleLoginPassword(simplePassword.getPassword());
+
+        return new Response(HttpStatus.OK, "성공");
     }
 }
