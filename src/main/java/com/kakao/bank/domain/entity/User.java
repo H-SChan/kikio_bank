@@ -56,4 +56,8 @@ public class User {
     public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;
     }
+
+    public void setSimpleNumber(Integer simpleNumber) {
+        this.simpleNumber = simpleNumber;
+    }
 }

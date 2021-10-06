@@ -33,6 +33,29 @@ public class UserServiceImpl implements UserService {
         userRepo.save(user);
     }
 
+    /**
+     * 간편 인증 비밀번호 수정
+     */
+    @Override
+    @Transactional
+    public void storeSimpleCertifyNumber(String userId, int number) {
+        User user = getUser(userId);
+        user.setSimpleNumber(number);
+        userRepo.save(user);
+    }
+
+    /**
+     * 간편 인증
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public void simpleCertify(String userId, int password) {
+        User user = getUser(userId);
+        if (!user.getSimpleNumber().equals(password)) {
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "비밀번호 틀림");
+        }
+    }
+
     private User getUser(String userId) {
         return userRepo.findById(userId).orElseThrow(
                 () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
