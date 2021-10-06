@@ -27,7 +27,7 @@ public class AuthServiceImpl implements AuthService{
         if (Boolean.TRUE.equals(validIdAndPassword(id, password))) {
             return jwtService.createToken(id);
         } else {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호");
+            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "잘못된 비밀번호");
         }
     }
 
@@ -38,9 +38,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional(readOnly = true)
     public Boolean validIdAndPassword(String id, String password) {
-        User user = userRepo.findById(id).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "유저를 찾을 수 없음")
-        );
+        User user = getUser(id);
         return user.getPassword().equals(password);
     }
 
@@ -63,15 +61,9 @@ public class AuthServiceImpl implements AuthService{
         return userRepo.findById(id).isEmpty();
     }
 
-    /**
-     * 간편 로그인 비밀번호 저장
-     */
-    @Override
-    @Transactional
-    public void storeSimpleLoginPassword(int simplePassword) {
-        User user = User.builder()
-                .simpleNumber(simplePassword)
-                .build();
-        userRepo.save(user);
+    private User getUser(String userId) {
+        return userRepo.findById(userId).orElseThrow(
+                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
+        );
     }
 }
