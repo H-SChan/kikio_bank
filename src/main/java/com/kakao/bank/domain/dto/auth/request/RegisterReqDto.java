@@ -1,12 +1,14 @@
 package com.kakao.bank.domain.dto.auth.request;
 
 import com.kakao.bank.domain.entity.User;
+import lombok.Getter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+@Getter
 public class RegisterReqDto {
     @Pattern(regexp = "^[a-zA-Z0-9]*$", message = "아이디는 영어와 숫자만 입력해주세요.")
     @Min(value = 5, message = "id는 5글자 이상 입력해야합니다.")

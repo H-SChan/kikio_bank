@@ -1,14 +1,15 @@
 package com.kakao.bank.domain.response;
 
+import lombok.Getter;
 import lombok.Setter;
-import org.springframework.http.HttpStatus;
 
+@Getter
 @Setter
 public class Response {
-    private HttpStatus status;
+    private int status;
     private String message;
 
-    public Response(HttpStatus status, String message) {
+    public Response(int status, String message) {
         this.status = status;
         this.message = message;
     }

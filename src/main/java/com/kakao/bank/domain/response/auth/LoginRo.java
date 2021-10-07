@@ -1,4 +1,4 @@
-package com.kakao.bank.domain.dto.auth.response;
+package com.kakao.bank.domain.response.auth;
 
 import lombok.Getter;
 import lombok.Setter;
