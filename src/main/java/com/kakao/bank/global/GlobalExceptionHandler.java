@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response> httpClientErrorExceptionHandler(HttpClientErrorException e) {
         log.warn("httpClientErrorExceptionHandler()");
         log.warn(e.getStatusCode().toString() + " " + e.getMessage());
-        Response response = new Response(e.getStatusCode(), e.getMessage());
+        Response response = new Response(e.getStatusCode().value(), e.getMessage());
         return new ResponseEntity<>(response, e.getStatusCode());
     }
 
@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Response> exceptionHandler(Exception e) {
         log.warn("exceptionHandler()");
         e.printStackTrace();
-        Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+        Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 에러");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
