@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.service.file.FileService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
@@ -21,6 +22,7 @@ public class FileController {
 
     private final FileService fileService;
 
+    @ApiOperation("파일 보기")
     @GetMapping("/{fileName}")
     public ResponseEntity<Resource> getImage(@PathVariable String fileName, HttpServletRequest request) {
         Resource resource = fileService.loadFile(fileName);
