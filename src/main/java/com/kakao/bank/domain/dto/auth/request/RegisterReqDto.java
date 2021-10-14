@@ -18,9 +18,6 @@ public class RegisterReqDto {
     @Size(min = 8, max = 16, message = "비밀번호는 8~16글자 사이로 입력해주세요.")
     private String password;
 
-    @Email
-    private String email;
-
     private String phoneNumber;
 
     private String residentRegistrationNumber;
@@ -33,7 +30,6 @@ public class RegisterReqDto {
         return User.builder()
                 .id(id)
                 .password(password)
-                .email(email)
                 .phoneNumber(phoneNumber)
                 .residentRegistrationNumber(residentRegistrationNumber)
                 .name(name)

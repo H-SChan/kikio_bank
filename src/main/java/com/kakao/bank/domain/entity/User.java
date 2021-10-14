@@ -26,10 +26,6 @@ public class User {
     @Column
     private String password;
 
-    // 이메일
-    @Column
-    private String email;
-
     // 전화번호
     @Column
     private String phoneNumber;
