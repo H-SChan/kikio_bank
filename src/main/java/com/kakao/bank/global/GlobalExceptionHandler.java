@@ -4,6 +4,7 @@ import com.kakao.bank.domain.response.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
@@ -26,5 +27,14 @@ public class GlobalExceptionHandler {
         e.printStackTrace();
         Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 에러");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<Response> bindExceptionHandler(BindException e) {
+        log.warn(e.getMessage());
+
+        log.warn(e.getBindingResult().toString());
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
