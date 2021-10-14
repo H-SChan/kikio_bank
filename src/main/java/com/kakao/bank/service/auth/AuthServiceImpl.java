@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService{
      * 회원가입
      */
     @Override
-    @Transactional(readOnly = true)
+    @Transactional
     public void register(RegisterReqDto registerReqDto) {
         userRepo.save(registerReqDto.toEntity());
     }
