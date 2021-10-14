@@ -19,7 +19,7 @@ public class User {
     private Long idx;
 
     // 아이디
-    @Column
+    @Column(unique = true)
     private String id;
 
     // 비밀번호
