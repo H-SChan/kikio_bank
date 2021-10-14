@@ -6,11 +6,15 @@ import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.enums.Bank;
 import com.kakao.bank.domain.repository.AccountRepo;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.domain.response.account.AccountRo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class AccountServiceImpl implements AccountService{
      * 계좌 생성
      */
     @Override
+    @Transactional
     public void openingAccount(OpeningAccountDto dto, String userId) {
         User user = getUser(userId);
         StringBuilder accountNum = new StringBuilder(BANK_NUM + dto.getAccountType().getIdentificationNum());
@@ -46,6 +51,25 @@ public class AccountServiceImpl implements AccountService{
         user.getAccounts().add(account);
 
         accountRepo.save(account);
+    }
+
+    /**
+     * 계좌 리스트 받아오기
+     * @return accountNumber, nickname, money of accounts
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public List<AccountRo> getAccounts(String userId) {
+        User user = getUser(userId);
+
+        List<AccountRo> response = new ArrayList<>();
+        for (Account account : user.getAccounts()) {
+            AccountRo accountRo = new AccountRo();
+            accountRo.accountToAccountRo(account);
+            response.add(accountRo);
+        }
+
+        return response;
     }
 
     private User getUser(String userId) {

@@ -2,17 +2,17 @@ package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
 import com.kakao.bank.domain.response.Response;
+import com.kakao.bank.domain.response.ResponseData;
+import com.kakao.bank.domain.response.account.AccountRo;
 import com.kakao.bank.service.account.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/account")
@@ -30,6 +30,15 @@ public class AccountController {
         accountService.openingAccount(accountDto, userId);
 
         return new Response(HttpStatus.OK.value(), "성공");
+    }
+
+    @ApiOperation("계좌 목록 받기")
+    @GetMapping
+    public ResponseData<List<AccountRo>> getAccountList(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        List<AccountRo> data = accountService.getAccounts(userId);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
 
 }
