@@ -1,10 +1,12 @@
 package com.kakao.bank.domain.entity;
 
 import com.kakao.bank.domain.enums.Purpose;
+import lombok.Getter;
 
 import javax.persistence.*;
 import java.util.Date;
 
+@Getter
 @Entity
 public class AccountRecord {
 
