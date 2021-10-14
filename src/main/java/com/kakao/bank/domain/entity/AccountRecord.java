@@ -26,4 +26,8 @@ public class AccountRecord {
     // 사용자 이름
     @Column
     private String name;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 }

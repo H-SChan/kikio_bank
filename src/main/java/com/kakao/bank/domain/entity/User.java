@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -52,6 +53,9 @@ public class User {
     // 간편 인증 번호
     @Column
     private Integer simpleNumber;
+
+    @OneToMany(mappedBy = "user")
+    private List<Account> accounts;
 
     public void setProfileImg(String profileImg) {
         this.profileImg = profileImg;

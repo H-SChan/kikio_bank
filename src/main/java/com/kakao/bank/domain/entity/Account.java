@@ -1,9 +1,16 @@
 package com.kakao.bank.domain.entity;
 
 import com.kakao.bank.domain.enums.Bank;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
+@Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Account {
 
@@ -29,4 +36,11 @@ public class Account {
     // 계좌 이름
     @Column
     private String nickname;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "account")
+    private List<AccountRecord> accountRecords;
 }
