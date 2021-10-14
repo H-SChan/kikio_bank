@@ -4,6 +4,7 @@ import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.ResponseData;
 import com.kakao.bank.domain.response.account.AccountRo;
+import com.kakao.bank.domain.response.account.DetailAccountRo;
 import com.kakao.bank.service.account.AccountService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +38,14 @@ public class AccountController {
     public ResponseData<List<AccountRo>> getAccountList(HttpServletRequest request) {
         String userId = (String) request.getAttribute("userId");
         List<AccountRo> data = accountService.getAccounts(userId);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
+    }
+
+    @ApiOperation("계좌 내역 보기")
+    @GetMapping("/detail/{accountId}")
+    public ResponseData<DetailAccountRo> getDetailAccount(@PathVariable Long accountId) {
+        DetailAccountRo data = accountService.getDetailAccounts(accountId);
 
         return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
