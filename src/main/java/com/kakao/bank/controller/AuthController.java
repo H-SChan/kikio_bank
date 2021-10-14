@@ -10,13 +10,11 @@ import com.kakao.bank.service.auth.AuthService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import javax.validation.Valid;
 
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -31,8 +29,11 @@ public class AuthController {
      */
     @ApiOperation("회원가입")
     @PostMapping("/register")
-    public Response register(@RequestBody RegisterReqDto registerReqDto) {
-        authService.register(registerReqDto);
+    public Response register(@ModelAttribute @Valid RegisterReqDto registerReqDto, MultipartFile file) {
+        if (file == null) {
+            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "파일이 널이다");
+        }
+        authService.register(registerReqDto, file);
 
         return new Response(HttpStatus.OK.value(), "회원가입 완료");
     }

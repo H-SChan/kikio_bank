@@ -3,19 +3,27 @@ package com.kakao.bank.service.auth;
 import com.kakao.bank.domain.dto.auth.request.RegisterReqDto;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.service.file.FileService;
 import com.kakao.bank.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService{
 
     private final UserRepo userRepo;
+
     private final JwtService jwtService;
+    private final FileService fileService;
+
+    @Value("${this.server.address}")
+    private String serverAddress;
 
     /**
      * 로그인
@@ -47,8 +55,9 @@ public class AuthServiceImpl implements AuthService{
      */
     @Override
     @Transactional
-    public void register(RegisterReqDto registerReqDto) {
-        userRepo.save(registerReqDto.toEntity());
+    public void register(RegisterReqDto registerReqDto, MultipartFile file) {
+        String fileName = fileService.storeFile(file);
+        userRepo.save(registerReqDto.toEntity(serverAddress + "/file/" + fileName));
     }
 
     /**
