@@ -70,6 +70,18 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void changeProfile(UserProfileInfo userProfileInfo, String userId) {
         User user = getUser(userId);
+        if (userProfileInfo.getName() == null) {
+            userProfileInfo.setName(user.getName());
+        }
+        if (userProfileInfo.getRRM() == null) {
+            userProfileInfo.setRRM(user.getResidentRegistrationNumber());
+        }
+        if (userProfileInfo.getPhoneNumber() == null) {
+            userProfileInfo.setPhoneNumber(user.getPhoneNumber());
+        }
+        if (userProfileInfo.getNickname() == null) {
+            userProfileInfo.setNickname(user.getNickname());
+        }
         userRepo.save(userProfileInfo.toEntity(user));
     }
 }
