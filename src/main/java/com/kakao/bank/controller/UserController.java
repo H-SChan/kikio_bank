@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.user.request.SimpleCertify;
+import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +55,19 @@ public class UserController {
     public Response simpleCertify(@RequestBody SimpleCertify simpleCertify, HttpServletRequest request) {
         String userId = extractUserIdFromToken(request);
         userService.simpleCertify(userId, simpleCertify.getNumber());
+
+        return new Response(HttpStatus.OK.value(), "성공");
+    }
+
+    /**
+     * 유저 정보 수정
+     * @return httpCode, message
+     */
+    @ApiOperation("유저 정보 수정")
+    @PatchMapping("/profile")
+    public Response changeProfile(@RequestBody UserProfileInfo userProfileInfo, HttpServletRequest request) {
+        String userId = extractUserIdFromToken(request);
+        userService.changeProfile(userProfileInfo, userId);
 
         return new Response(HttpStatus.OK.value(), "성공");
     }

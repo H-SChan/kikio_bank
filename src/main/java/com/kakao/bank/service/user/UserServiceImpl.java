@@ -1,5 +1,6 @@
 package com.kakao.bank.service.user;
 
+import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
 import com.kakao.bank.service.file.FileService;
@@ -60,5 +61,15 @@ public class UserServiceImpl implements UserService {
         return userRepo.findById(userId).orElseThrow(
                 () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
         );
+    }
+
+    /**
+     * 유저 정보 수정
+     */
+    @Override
+    @Transactional
+    public void changeProfile(UserProfileInfo userProfileInfo, String userId) {
+        User user = getUser(userId);
+        userRepo.save(userProfileInfo.toEntity(user));
     }
 }
