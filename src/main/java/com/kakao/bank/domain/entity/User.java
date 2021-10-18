@@ -1,9 +1,6 @@
 package com.kakao.bank.domain.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
@@ -59,5 +56,21 @@ public class User {
 
     public void setSimpleNumber(Integer simpleNumber) {
         this.simpleNumber = simpleNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setResidentRegistrationNumber(String residentRegistrationNumber) {
+        this.residentRegistrationNumber = residentRegistrationNumber;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
     }
 }
