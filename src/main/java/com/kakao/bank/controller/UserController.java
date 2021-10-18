@@ -42,7 +42,7 @@ public class UserController {
         String userId = extractUserIdFromToken(request);
         userService.storeSimpleCertifyNumber(userId, simpleCertify.getNumber());
 
-        return new Response(HttpStatus.OK.value(), "성공");
+        return new Response(HttpStatus.CREATED.value(), "성공");
     }
 
     /**
