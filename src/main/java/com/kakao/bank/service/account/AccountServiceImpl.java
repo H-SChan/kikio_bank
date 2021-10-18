@@ -49,7 +49,7 @@ public class AccountServiceImpl implements AccountService{
         Account account = Account.builder()
                 .accountNumber(accountNum.toString())
                 .user(user)
-                .bank(Bank.SAECHAN)
+                .bank(Bank.KAKAO)
                 .money(10000L)
                 .nickname(dto.getNickname())
                 .password(dto.getPassword())
@@ -83,7 +83,7 @@ public class AccountServiceImpl implements AccountService{
     public DetailAccountRo getDetailAccounts(Long accountIdx) {
         Account account = getAccount(accountIdx);
         AccountType accountType;
-        if (parseBank(account) == Bank.SAECHAN) {
+        if (parseBank(account) == Bank.KAKAO) {
             accountType = parseAccountTypeSaeChan(account);
         }
         else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
@@ -128,8 +128,8 @@ public class AccountServiceImpl implements AccountService{
                 account.getAccountNumber().getBytes(StandardCharsets.UTF_8),
                 0,
                 3);
-        if(bankNum.equals(Bank.SAECHAN.getBankNum())) {
-            return Bank.SAECHAN;
+        if(bankNum.equals(Bank.KAKAO.getBankNum())) {
+            return Bank.KAKAO;
         } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
     }
 }
