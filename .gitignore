@@ -38,3 +38,4 @@ out/
 .vscode/
 
 static
+!static/default.png

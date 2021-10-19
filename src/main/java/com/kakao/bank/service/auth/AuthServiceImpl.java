@@ -56,7 +56,12 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional
     public void register(RegisterReqDto registerReqDto, MultipartFile file) {
-        String fileName = fileService.storeFile(file);
+        String fileName;
+        if (file.isEmpty()) {
+            fileName = "default.png";
+        } else {
+            fileName = fileService.storeFile(file);
+        }
         userRepo.save(registerReqDto.toEntity(serverAddress + "/file/" + fileName));
     }
 
