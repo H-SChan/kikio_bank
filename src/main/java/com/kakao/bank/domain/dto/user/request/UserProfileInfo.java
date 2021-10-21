@@ -7,13 +7,13 @@ import lombok.Setter;
 @Getter @Setter
 public class UserProfileInfo {
     private String phoneNumber;
-    private String RRM;
+    private String rRM;
     private String name;
     private String nickname;
 
     public User toEntity(User user) {
         user.setPhoneNumber(phoneNumber);
-        user.setResidentRegistrationNumber(RRM);
+        user.setResidentRegistrationNumber(rRM);
         user.setName(name);
         user.setNickname(nickname);
 
