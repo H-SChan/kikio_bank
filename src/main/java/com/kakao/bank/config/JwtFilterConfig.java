@@ -21,6 +21,7 @@ public class JwtFilterConfig {
 
         registrationBean.setFilter(new JwtAuthenticationFilter(handlerExceptionResolver));
         registrationBean.addUrlPatterns("/user/*");
+        registrationBean.addUrlPatterns("/account/*");
         registrationBean.setOrder(2);
 
         return registrationBean;
