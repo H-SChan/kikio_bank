@@ -3,6 +3,7 @@ package com.kakao.bank.service.user;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.lib.UserFinder;
 import com.kakao.bank.service.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private final UserFinder userFinder;
+
     private final FileService fileService;
+
     private final UserRepo userRepo;
 
     @Value("${this.server.address}")
@@ -28,7 +32,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changeProfileImg(MultipartFile file, String userId) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
         String fileName = fileService.storeFile(file);
         user.setProfileImg(serverAddress + "/file/" + fileName);
         userRepo.save(user);
@@ -40,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void storeSimpleCertifyNumber(String userId, int number) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
         user.setSimpleNumber(number);
         userRepo.save(user);
     }
@@ -51,16 +55,10 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional(readOnly = true)
     public void simpleCertify(String userId, int password) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
         if (!user.getSimpleNumber().equals(password)) {
             throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "비밀번호 틀림");
         }
-    }
-
-    private User getUser(String userId) {
-        return userRepo.findById(userId).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
-        );
     }
 
     /**
@@ -69,7 +67,7 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public void changeProfile(UserProfileInfo userProfileInfo, String userId) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
         if (userProfileInfo.getName() == null) {
             userProfileInfo.setName(user.getName());
         }

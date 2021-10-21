@@ -11,11 +11,11 @@ import com.kakao.bank.domain.repository.UserRepo;
 import com.kakao.bank.domain.response.account.AccountRo;
 import com.kakao.bank.domain.response.account.DetailAccountRo;
 import com.kakao.bank.domain.response.record.RecordRo;
+import com.kakao.bank.lib.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
 import java.nio.charset.StandardCharsets;
@@ -25,7 +25,9 @@ import java.util.Random;
 
 @RequiredArgsConstructor
 @Service
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements AccountService {
+
+    private final UserFinder userFinder;
 
     private final AccountRepo accountRepo;
     private final UserRepo userRepo;
@@ -39,7 +41,7 @@ public class AccountServiceImpl implements AccountService{
     @Override
     @Transactional
     public void openingAccount(OpeningAccountDto dto, String userId) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
         StringBuilder accountNum = new StringBuilder(BANK_NUM + dto.getAccountType().getIdentificationNum());
         for (int i = 0; i < 7; i++) {
             int randInt = random.nextInt(10);
@@ -61,12 +63,13 @@ public class AccountServiceImpl implements AccountService{
 
     /**
      * 계좌 리스트 받아오기
+     *
      * @return accountNumber, nickname, money of accounts
      */
     @Override
     @Transactional(readOnly = true)
     public List<AccountRo> getAccounts(String userId) {
-        User user = getUser(userId);
+        User user = userFinder.getUser(userId);
 
         List<AccountRo> response = new ArrayList<>();
         for (Account account : user.getAccounts()) {
@@ -84,9 +87,8 @@ public class AccountServiceImpl implements AccountService{
         Account account = getAccount(accountIdx);
         AccountType accountType;
         if (parseBank(account) == Bank.KAKAO) {
-            accountType = parseAccountTypeSaeChan(account);
-        }
-        else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+            accountType = parseAccountTypeKakao(account);
+        } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
         DetailAccountRo detailAccountRo = new DetailAccountRo();
         detailAccountRo.accountToDetailAccountRo(account, accountType);
 
@@ -99,17 +101,11 @@ public class AccountServiceImpl implements AccountService{
         return detailAccountRo;
     }
 
-    private User getUser(String userId) {
-        return userRepo.findById(userId).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
-        );
-    }
-
     private Account getAccount(Long accountIdx) {
         return accountRepo.getById(accountIdx);
     }
 
-    public AccountType parseAccountTypeSaeChan(Account account) {
+    public AccountType parseAccountTypeKakao(Account account) {
         String identificationNum = new String(
                 account.getAccountNumber().getBytes(StandardCharsets.UTF_8),
                 3,
@@ -128,7 +124,7 @@ public class AccountServiceImpl implements AccountService{
                 account.getAccountNumber().getBytes(StandardCharsets.UTF_8),
                 0,
                 3);
-        if(bankNum.equals(Bank.KAKAO.getBankNum())) {
+        if (bankNum.equals(Bank.KAKAO.getBankNum())) {
             return Bank.KAKAO;
         } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
     }

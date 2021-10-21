@@ -3,6 +3,7 @@ package com.kakao.bank.service.auth;
 import com.kakao.bank.domain.dto.auth.request.RegisterReqDto;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.lib.UserFinder;
 import com.kakao.bank.service.file.FileService;
 import com.kakao.bank.service.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService{
+
+    private final UserFinder userFinder;
 
     private final UserRepo userRepo;
 
@@ -46,7 +49,7 @@ public class AuthServiceImpl implements AuthService{
     @Override
     @Transactional(readOnly = true)
     public Boolean validIdAndPassword(String id, String password) {
-        User user = getUser(id);
+        User user = userFinder.getUser(id);
         return user.getPassword().equals(password);
     }
 
@@ -75,9 +78,4 @@ public class AuthServiceImpl implements AuthService{
         return userRepo.findById(id).isEmpty();
     }
 
-    private User getUser(String userId) {
-        return userRepo.findById(userId).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
-        );
-    }
 }
