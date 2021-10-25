@@ -1,5 +1,6 @@
 package com.kakao.bank.service.user;
 
+import com.kakao.bank.domain.dto.user.request.SelfCertificationDto;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
@@ -81,5 +82,19 @@ public class UserServiceImpl implements UserService {
             userProfileInfo.setNickname(user.getNickname());
         }
         userRepo.save(userProfileInfo.toEntity(user));
+    }
+
+    /**
+     * 본인인증
+     *
+     * @return true/false
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean selfCertification(SelfCertificationDto selfCertificationDto, String userId) {
+        User user = userFinder.getUser(userId);
+
+        return user.getName().equals(selfCertificationDto.getName()) &&
+                user.getResidentRegistrationNumber().equals(selfCertificationDto.getRRM());
     }
 }

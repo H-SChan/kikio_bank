@@ -1,8 +1,10 @@
 package com.kakao.bank.controller;
 
+import com.kakao.bank.domain.dto.user.request.SelfCertificationDto;
 import com.kakao.bank.domain.dto.user.request.SimpleCertify;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.response.Response;
+import com.kakao.bank.domain.response.ResponseData;
 import com.kakao.bank.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +72,15 @@ public class UserController {
         userService.changeProfile(userProfileInfo, userId);
 
         return new Response(HttpStatus.OK.value(), "성공");
+    }
+
+    @ApiOperation("본인인증")
+    @PostMapping("/self/certification")
+    public ResponseData<Boolean> selfCertification(@RequestBody SelfCertificationDto selfCertificationDto, HttpServletRequest request) {
+        String userId = extractUserIdFromToken(request);
+        Boolean data = userService.selfCertification(selfCertificationDto, userId);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
 
     /**
