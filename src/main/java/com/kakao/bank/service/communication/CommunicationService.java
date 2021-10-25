@@ -9,4 +9,7 @@ import java.util.List;
 public interface CommunicationService {
     @Transactional(readOnly = true)
     List<GetAccountListRo> getMyAccounts(GetAccountListDto getAccountListDto);
+
+    @Transactional(readOnly = true)
+    String validAccount(String accountNumber);
 }

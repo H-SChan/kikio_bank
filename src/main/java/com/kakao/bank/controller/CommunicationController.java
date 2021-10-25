@@ -6,10 +6,7 @@ import com.kakao.bank.service.communication.CommunicationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -39,5 +36,11 @@ public class CommunicationController {
     @GetMapping()
     public List<GetAccountListRo> getAccounts(@RequestBody GetAccountListDto getAccountListDto) {
         return communicationService.getMyAccounts(getAccountListDto);
+    }
+
+    @ApiOperation("계좌번호 확인")
+    @GetMapping("check/accountNum/{accountNumber}")
+    public String validAccountNumber(@PathVariable String accountNumber) {
+        return communicationService.validAccount(accountNumber);
     }
 }

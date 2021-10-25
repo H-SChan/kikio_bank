@@ -6,6 +6,7 @@ import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.enums.Bank;
 import com.kakao.bank.domain.repository.UserRepo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
+import com.kakao.bank.lib.AccountFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ import java.util.List;
 @RequiredArgsConstructor
 @Service
 public class CommunicationServiceImpl implements CommunicationService {
+
+    private final AccountFinder accountFinder;
 
     private final UserRepo userRepo;
 
@@ -53,5 +56,15 @@ public class CommunicationServiceImpl implements CommunicationService {
         }
 
         return result;
+    }
+
+    /**
+     * 있는 계좌번호인지 확인
+     * @return Name of the account holder
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public String validAccount(String accountNumber) {
+        return accountFinder.accountNumber(accountNumber).getUser().getName();
     }
 }
