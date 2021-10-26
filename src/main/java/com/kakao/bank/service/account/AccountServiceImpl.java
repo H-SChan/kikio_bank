@@ -126,6 +126,14 @@ public class AccountServiceImpl implements AccountService {
                 3);
         if (bankNum.equals(Bank.KAKAO.getBankNum())) {
             return Bank.KAKAO;
+        } else if (bankNum.equals(Bank.DAEGU.getBankNum())) {
+            return Bank.DAEGU;
+        } else if (bankNum.equals(Bank.TOSS.getBankNum())) {
+            return Bank.TOSS;
+        } else if (bankNum.equals(Bank.MAAGU.getBankNum())) {
+            return Bank.MAAGU;
+        } else if (bankNum.equals(Bank.KBANK.getBankNum())) {
+            return Bank.MAAGU;
         } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
     }
 
