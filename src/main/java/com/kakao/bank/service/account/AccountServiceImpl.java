@@ -32,7 +32,6 @@ public class AccountServiceImpl implements AccountService {
     private final AccountRepo accountRepo;
     private final UserRepo userRepo;
 
-    private final String BANK_NUM = "108";
     private Random random = new Random();
 
     /**
@@ -42,12 +41,13 @@ public class AccountServiceImpl implements AccountService {
     @Transactional
     public void openingAccount(OpeningAccountDto dto, String userId) {
         User user = userFinder.getUser(userId);
-        StringBuilder accountNum = new StringBuilder(BANK_NUM + dto.getAccountType().getIdentificationNum());
-        for (int i = 0; i < 7; i++) {
-            int randInt = random.nextInt(10);
-            System.out.println(randInt);
-            accountNum.append(randInt);
-        }
+        StringBuilder accountNum = new StringBuilder(Bank.KAKAO.getBankNum() + dto.getAccountType().getIdentificationNum());
+        do {
+            for (int i = 0; i < 7; i++) {
+                int randInt = random.nextInt(10);
+                accountNum.append(randInt);
+            }
+        } while (Boolean.FALSE.equals(isThereAccountNum(accountNum.toString())));
         Account account = Account.builder()
                 .accountNumber(accountNum.toString())
                 .user(user)
@@ -127,5 +127,9 @@ public class AccountServiceImpl implements AccountService {
         if (bankNum.equals(Bank.KAKAO.getBankNum())) {
             return Bank.KAKAO;
         } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+    }
+
+    private Boolean isThereAccountNum(String accountNumber) {
+        return accountRepo.findAccountByAccountNumber(accountNumber).isEmpty();
     }
 }
