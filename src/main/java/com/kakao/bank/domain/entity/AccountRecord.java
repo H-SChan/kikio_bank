@@ -1,11 +1,18 @@
 package com.kakao.bank.domain.entity;
 
 import com.kakao.bank.domain.enums.Purpose;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
+@Builder
+@RequiredArgsConstructor
+@AllArgsConstructor
 @Getter
 @Entity
 public class AccountRecord {
@@ -14,8 +21,9 @@ public class AccountRecord {
     private Long idx;
 
     // 일시
+    @CreatedDate
     @Column
-    private Date date;
+    private LocalDateTime date;
 
     // 돈
     @Column
