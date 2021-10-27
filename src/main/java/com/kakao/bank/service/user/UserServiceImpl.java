@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     public void simpleCertify(String userId, int password) {
         User user = userFinder.getUser(userId);
         if (!user.getSimpleNumber().equals(password)) {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "비밀번호 틀림");
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "비밀번호 틀림");
         }
     }
 

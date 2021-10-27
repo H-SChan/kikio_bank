@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService{
         if (Boolean.TRUE.equals(validIdAndPassword(id, password))) {
             return jwtService.createToken(id);
         } else {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "잘못된 비밀번호");
+            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
         }
     }
 
