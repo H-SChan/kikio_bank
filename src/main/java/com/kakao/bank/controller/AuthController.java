@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.util.annotation.Nullable;
 
 import javax.validation.Valid;
 
@@ -29,10 +30,7 @@ public class AuthController {
      */
     @ApiOperation("회원가입")
     @PostMapping("/register")
-    public Response register(@ModelAttribute @Valid RegisterReqDto registerReqDto, MultipartFile file) {
-        if (file == null) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "파일이 널이다");
-        }
+    public Response register(@ModelAttribute @Valid RegisterReqDto registerReqDto,@Nullable MultipartFile file) {
         authService.register(registerReqDto, file);
 
         return new Response(HttpStatus.OK.value(), "회원가입 완료");
