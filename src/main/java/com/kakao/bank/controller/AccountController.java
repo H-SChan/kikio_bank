@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
+import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.ResponseData;
 import com.kakao.bank.domain.response.account.AccountRo;
@@ -48,6 +49,15 @@ public class AccountController {
         DetailAccountRo data = accountService.getDetailAccounts(accountId);
 
         return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
+    }
+
+    @ApiOperation(value = "내 계좌에서 돈 가져오기", notes = "내 은행의 계좌만 가능")
+    @PostMapping("/take")
+    public Response takeMoney(@RequestBody TakeMoneyDto takeMoneyDto, HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        accountService.takeMoney(takeMoneyDto, userId);
+
+        return new Response(HttpStatus.OK.value(), "성공");
     }
 
 }
