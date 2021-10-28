@@ -3,6 +3,7 @@ package com.kakao.bank.global;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
+import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -56,5 +57,14 @@ public class GlobalExceptionHandler {
 
         Response response = new Response(e.getStatus().value(), e.getMessage());
         return new ResponseEntity<>(response, e.getStatus());
+    }
+
+    @ExceptionHandler(ParseException.class)
+    public ResponseEntity<Response> parseExceptionHandler(ParseException e) {
+        log.warn("parseExceptionHandler()");
+        log.warn(e.getMessage());
+
+        Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류");
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
