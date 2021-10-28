@@ -1,10 +1,12 @@
 package com.kakao.bank.global;
 
 import com.kakao.bank.domain.response.Response;
+import com.kakao.bank.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
@@ -36,5 +38,23 @@ public class GlobalExceptionHandler {
         log.warn(e.getBindingResult().toString());
         Response response = new Response(HttpStatus.BAD_REQUEST.value(), e.getMessage());
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Response> httpRequestMethodNotSupportedExceptionHandler(HttpRequestMethodNotSupportedException e) {
+        log.warn("httpRequestMethodNotSupportedExceptionHandler()");
+        log.warn(e.getMessage());
+
+        Response response = new Response(HttpStatus.METHOD_NOT_ALLOWED.value(), e.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    @ExceptionHandler(CustomException.class)
+    public ResponseEntity<Response> customExceptionHandler(CustomException e) {
+        log.warn("customExceptionHandler()");
+        log.warn(e.getMessage());
+
+        Response response = new Response(e.getStatus().value(), e.getMessage());
+        return new ResponseEntity<>(response, e.getStatus());
     }
 }
