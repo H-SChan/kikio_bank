@@ -2,6 +2,7 @@ package com.kakao.bank.service.account;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
+import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.entity.Account;
 import com.kakao.bank.domain.entity.AccountRecord;
 import com.kakao.bank.domain.entity.User;
@@ -16,6 +17,7 @@ import com.kakao.bank.domain.response.record.RecordRo;
 import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.AccountFinder;
 import com.kakao.bank.lib.UserFinder;
+import com.kakao.bank.service.communication.CommunicationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ public class AccountServiceImpl implements AccountService {
 
     private final AccountRepo accountRepo;
     private final AccountRecordRepo accountRecordRepo;
+
+    private final CommunicationService communicationService;
 
     private final Random random = new Random();
 
@@ -176,6 +180,28 @@ public class AccountServiceImpl implements AccountService {
                 .user(user)
                 .build();
         accountRepo.save(accountSave);
+    }
+
+    /**
+     * 다른 은행의 내 계좌 불러오기
+     *
+     * @return accountNumber, nickname, money of accounts
+     */
+    @Override
+    public List<AccountRo> getOtherBanksAccounts(String userId) {
+        User user = userFinder.getUser(userId);
+        List<AccountRo> list = new ArrayList<>();
+
+        List<BroughtAccountDto> otherAccounts = communicationService.getOtherAccounts(user.getPhoneNumber());
+        long idx = 0L;
+        for (BroughtAccountDto otherAccount : otherAccounts) {
+            AccountRo accountRo = new AccountRo();
+            accountRo.broughtAccountToAccountRo(otherAccount, idx++);
+
+            list.add(accountRo);
+        }
+
+        return list;
     }
 
     private Account getAccount(Long accountIdx) {

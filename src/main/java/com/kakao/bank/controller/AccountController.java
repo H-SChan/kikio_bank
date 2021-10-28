@@ -60,4 +60,13 @@ public class AccountController {
         return new Response(HttpStatus.OK.value(), "성공");
     }
 
+    @ApiOperation("타 은행의 내 계좌 보기")
+    @GetMapping("/other")
+    public ResponseData<List<AccountRo>> getOtherBanksAccounts(HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        List<AccountRo> data = accountService.getOtherBanksAccounts(userId);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
+    }
+
 }

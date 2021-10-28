@@ -25,4 +25,6 @@ public interface AccountService {
 
     @Transactional
     void saveAccountAndRecord(Long usedMoney, Purpose usingType, Account account, User user, Long balance);
+
+    List<AccountRo> getOtherBanksAccounts(String userId);
 }
