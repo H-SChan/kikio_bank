@@ -33,9 +33,9 @@ public class CommunicationController {
     private String kbankAddress;
 
     @ApiOperation("사용자 계좌 찾기")
-    @GetMapping()
-    public List<GetAccountListRo> getAccounts(@RequestBody GetAccountListDto getAccountListDto) {
-        return communicationService.getMyAccounts(getAccountListDto);
+    @GetMapping("/{phoneNumber}")
+    public List<GetAccountListRo> getAccounts(@PathVariable String phoneNumber) {
+        return communicationService.getMyAccounts(phoneNumber);
     }
 
     @ApiOperation("계좌번호 확인")
