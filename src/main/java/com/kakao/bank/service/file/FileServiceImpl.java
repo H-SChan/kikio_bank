@@ -1,5 +1,6 @@
 package com.kakao.bank.service.file;
 
+import com.kakao.bank.exception.CustomException;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class FileServiceImpl implements FileService {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "검증 오류");
         }
         String fileName = StringUtils.cleanPath(
-                UUID.randomUUID().toString()
+                UUID.randomUUID()
                         + "-"
                         + Objects.nonNull(file.getOriginalFilename()) + ".jpg"
         );
@@ -63,7 +64,7 @@ public class FileServiceImpl implements FileService {
         if (resource != null && resource.exists()) {
             return resource;
         } else {
-            throw new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 파일");
+            throw new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 파일");
         }
     }
 

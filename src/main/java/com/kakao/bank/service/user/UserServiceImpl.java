@@ -4,6 +4,7 @@ import com.kakao.bank.domain.dto.user.request.SelfCertificationDto;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.UserFinder;
 import com.kakao.bank.service.file.FileService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     public void simpleCertify(String userId, int password) {
         User user = userFinder.getUser(userId);
         if (!user.getSimpleNumber().equals(password)) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "비밀번호 틀림");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "비밀번호 틀림");
         }
     }
 

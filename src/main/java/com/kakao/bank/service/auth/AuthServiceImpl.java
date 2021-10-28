@@ -3,6 +3,7 @@ package com.kakao.bank.service.auth;
 import com.kakao.bank.domain.dto.auth.request.RegisterReqDto;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.UserFinder;
 import com.kakao.bank.service.file.FileService;
 import com.kakao.bank.service.jwt.JwtService;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
@@ -38,7 +38,7 @@ public class AuthServiceImpl implements AuthService{
         if (Boolean.TRUE.equals(validIdAndPassword(id, password))) {
             return jwtService.createToken(id);
         } else {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "잘못된 비밀번호");
         }
     }
 

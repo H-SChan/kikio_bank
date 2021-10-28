@@ -1,7 +1,7 @@
 package com.kakao.bank.service.jwt;
 
-import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.exception.CustomException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
@@ -73,19 +73,19 @@ public class JwtServiceImpl implements JwtService{
                     .parseClaimsJws(token)
                     .getBody();
             return userRepo.findById(claims.get("id").toString()).orElseThrow(
-                    () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "유저 없음")
+                    () -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저")
             ).getId();
         } catch (ExpiredJwtException e) {
-            throw new HttpClientErrorException(HttpStatus.GONE, "토큰 만료");
+            throw new CustomException(HttpStatus.GONE, "토큰 만료");
         } catch (SignatureException | MalformedJwtException e) {
-            throw new HttpClientErrorException(HttpStatus.UNAUTHORIZED, "토큰 위조");
+            throw new CustomException(HttpStatus.UNAUTHORIZED, "토큰 위조");
         } catch (IllegalArgumentException e) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "토큰 없음");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "토큰 없음");
         } catch (HttpClientErrorException e) {
             throw e;
         } catch (Exception e) {
             e.printStackTrace();
-            throw new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
         }
     }
 }

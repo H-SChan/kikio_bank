@@ -2,10 +2,10 @@ package com.kakao.bank.lib;
 
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 
 @RequiredArgsConstructor
 @Component
@@ -14,7 +14,7 @@ public class UserFinder {
 
     public User getUser(String userId) {
         return userRepo.findById(userId).orElseThrow(
-                () -> new HttpClientErrorException(HttpStatus.NOT_FOUND, "없는 유저")
+                () -> new CustomException(HttpStatus.NOT_FOUND, "존재하지 않는 유저")
         );
     }
 }

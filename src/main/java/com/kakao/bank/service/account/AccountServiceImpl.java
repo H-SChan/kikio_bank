@@ -13,14 +13,13 @@ import com.kakao.bank.domain.repository.AccountRepo;
 import com.kakao.bank.domain.response.account.AccountRo;
 import com.kakao.bank.domain.response.account.DetailAccountRo;
 import com.kakao.bank.domain.response.record.RecordRo;
+import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.AccountFinder;
 import com.kakao.bank.lib.UserFinder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.HttpServerErrorException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -98,7 +97,7 @@ public class AccountServiceImpl implements AccountService {
         AccountType accountType;
         if (parseBank(account) == Bank.KAKAO) {
             accountType = parseAccountTypeKakao(account);
-        } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
+        } else throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
         DetailAccountRo detailAccountRo = new DetailAccountRo();
         detailAccountRo.accountToDetailAccountRo(account, accountType);
 
@@ -121,12 +120,12 @@ public class AccountServiceImpl implements AccountService {
         Account fromAccount = accountFinder.accountNumber(takeMoneyDto.getFromAccountNum());
         Account toAccount = accountFinder.accountNumber(takeMoneyDto.getToAccountNum());
         if (parseBank(fromAccount) != Bank.KAKAO && parseBank(toAccount) != Bank.KAKAO) {
-            throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "해당 은행 기능 사용 불가");
+            throw new CustomException(HttpStatus.BAD_REQUEST, "해당 은행 기능 사용 불가");
         }
         // 진고
         long balance = fromAccount.getMoney() - takeMoneyDto.getMoney();
         if (balance < 0) {
-            throw new HttpClientErrorException(HttpStatus.FORBIDDEN, "잔액 부족");
+            throw new CustomException(HttpStatus.FORBIDDEN, "잔액 부족");
         }
 
         saveAccountAndRecord(
@@ -194,7 +193,7 @@ public class AccountServiceImpl implements AccountService {
             return AccountType.DEPOSIT;
         } else if (identificationNum.equals(AccountType.INSTALLMENT_SAVING.getIdentificationNum())) {
             return AccountType.INSTALLMENT_SAVING;
-        } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+        } else throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
     }
 
     private Bank parseBank(Account account) {
@@ -212,7 +211,7 @@ public class AccountServiceImpl implements AccountService {
             return Bank.MAAGU;
         } else if (bankNum.equals(Bank.KBANK.getBankNum())) {
             return Bank.MAAGU;
-        } else throw new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러");
+        } else throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
     }
 
     private Boolean isThereAccountNum(String accountNumber) {
