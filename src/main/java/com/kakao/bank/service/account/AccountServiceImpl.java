@@ -205,6 +205,9 @@ public class AccountServiceImpl implements AccountService {
         return list;
     }
 
+    /**
+     * 타 은행 계좌 저장하기
+     */
     @Override
     @Transactional
     public void storeAccount(StoreAccountDto storeAccountDto, String userId) {
