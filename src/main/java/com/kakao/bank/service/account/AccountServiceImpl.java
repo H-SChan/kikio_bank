@@ -1,6 +1,7 @@
 package com.kakao.bank.service.account;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
+import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.entity.Account;
@@ -202,6 +203,22 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return list;
+    }
+
+    @Override
+    @Transactional
+    public void storeAccount(StoreAccountDto storeAccountDto, String userId) {
+        User user = userFinder.getUser(userId);
+        Account account = Account.builder()
+                .accountNumber(storeAccountDto.getAccountNumber())
+                .money(storeAccountDto.getMoney())
+                .password(null)
+                .bank(storeAccountDto.getBank())
+                .nickname(storeAccountDto.getNickname())
+                .user(user)
+                .build();
+
+        accountRepo.save(account);
     }
 
     private Account getAccount(Long accountIdx) {
