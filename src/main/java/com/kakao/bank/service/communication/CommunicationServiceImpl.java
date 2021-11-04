@@ -5,6 +5,7 @@ import com.kakao.bank.domain.entity.Account;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.enums.Bank;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.AccountFinder;
@@ -74,8 +75,8 @@ public class CommunicationServiceImpl implements CommunicationService {
      */
     @Override
     @Transactional(readOnly = true)
-    public String validAccount(String accountNumber) {
-        return accountFinder.accountNumber(accountNumber).getUser().getName();
+    public CheckAccountNumRo validAccount(String accountNumber) {
+        return new CheckAccountNumRo("사용 가능", accountFinder.accountNumber(accountNumber));
     }
 
     /**
