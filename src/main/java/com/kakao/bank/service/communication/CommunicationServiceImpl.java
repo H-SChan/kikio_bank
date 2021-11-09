@@ -10,6 +10,7 @@ import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.AccountFinder;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,11 +19,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CommunicationServiceImpl implements CommunicationService {
@@ -89,9 +93,11 @@ public class CommunicationServiceImpl implements CommunicationService {
 
             List<BroughtAccountDto> maaguAccounts = getMaaguAccount(phoneNumber);
             List<BroughtAccountDto> tossAccounts = getTossAccount(phoneNumber);
+            List<BroughtAccountDto> kBankAccounts = getKBankAccount(phoneNumber);
 
             accounts.addAll(maaguAccounts);
             accounts.addAll(tossAccounts);
+            accounts.addAll(kBankAccounts);
 
             return accounts;
         } catch (ParseException e) {
@@ -143,11 +149,45 @@ public class CommunicationServiceImpl implements CommunicationService {
 
             String name = (String) accountData.get("name");
             Long money = (Long) accountData.get("money");
-            String accountNumber = (String) accountData.get("accountNumber").toString();
+            String accountNumber = accountData.get("accountNumber").toString();
 
             BroughtAccountDto account = new BroughtAccountDto(accountNumber, name, money, null, Bank.TOSS);
             list.add(account);
         }
         return list;
+    }
+
+    public List<BroughtAccountDto> getKBankAccount(String phoneNumber) throws ParseException {
+        try {
+            List<BroughtAccountDto> list = new ArrayList<>();
+
+            String url = kBankAddress + "/api/open/accounts/" + phoneNumber;
+            String res = restTemplate.getForObject(url, String.class);
+
+            JSONArray jsonObj = (JSONArray) jsonParser.parse(res);
+
+            for (Object o : jsonObj) {
+                JSONObject accountData = (JSONObject) o;
+
+                String accountNumber = (String) accountData.get("ID");
+                JSONObject accountNickname = (JSONObject) accountData.get("AccountNickname");
+                String name = (String) accountNickname.get("String");
+                Long money = (Long) accountData.get("Balance");
+                String password = (String) accountData.get("Password");
+
+                BroughtAccountDto account = new BroughtAccountDto(
+                        accountNumber,
+                        name,
+                        money,
+                        password,
+                        Bank.KBANK
+                );
+                list.add(account);
+            }
+            return list;
+        } catch (ResourceAccessException e) {
+            log.warn(e.getLocalizedMessage());
+        }
+        return Collections.emptyList();
     }
 }
