@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.GetAccountListDto;
+import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.service.communication.CommunicationService;
 import io.swagger.annotations.ApiOperation;
@@ -40,7 +41,7 @@ public class CommunicationController {
 
     @ApiOperation("계좌번호 확인")
     @GetMapping("check/accountNum/{accountNumber}")
-    public String validAccountNumber(@PathVariable String accountNumber) {
+    public CheckAccountNumRo validAccountNumber(@PathVariable String accountNumber) {
         return communicationService.validAccount(accountNumber);
     }
 }
