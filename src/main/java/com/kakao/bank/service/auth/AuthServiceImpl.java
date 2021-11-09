@@ -60,7 +60,7 @@ public class AuthServiceImpl implements AuthService{
     @Transactional
     public void register(RegisterReqDto registerReqDto, MultipartFile file) {
         String fileName;
-        if (file.isEmpty()) {
+        if (file == null) {
             fileName = "default.png";
         } else {
             fileName = fileService.storeFile(file);
