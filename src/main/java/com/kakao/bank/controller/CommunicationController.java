@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.GetAccountListDto;
+import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
 import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.service.communication.CommunicationService;
@@ -43,5 +44,11 @@ public class CommunicationController {
     @GetMapping("check/accountNum/{accountNumber}")
     public CheckAccountNumRo validAccountNumber(@PathVariable String accountNumber) {
         return communicationService.validAccount(accountNumber);
+    }
+
+    @ApiOperation("계좌의 비밀번호가 맞는지 확인")
+    @GetMapping("/check/accountPw")
+    public Boolean checkAccountPassword(@RequestBody CheckAccountPasswordDto checkAccountPasswordDto) {
+        return communicationService.checkPassword(checkAccountPasswordDto);
     }
 }

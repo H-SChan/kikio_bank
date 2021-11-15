@@ -1,6 +1,7 @@
 package com.kakao.bank.service.communication;
 
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
+import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
 import com.kakao.bank.domain.entity.Account;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.enums.Bank;
@@ -104,6 +105,16 @@ public class CommunicationServiceImpl implements CommunicationService {
             e.printStackTrace();
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
         }
+    }
+
+    /**
+     * 해당 계좌의 비밀번호가 맞는지 확인
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean checkPassword(CheckAccountPasswordDto dto) {
+        Account account = accountFinder.accountNumber(dto.getAccountNum());
+        return account.getPassword().equals(dto.getPassword());
     }
 
     public List<BroughtAccountDto> getMaaguAccount(String phoneNumber) throws ParseException {
