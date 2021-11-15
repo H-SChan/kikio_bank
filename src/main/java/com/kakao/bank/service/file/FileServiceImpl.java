@@ -31,11 +31,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public String storeFile(MultipartFile file) {
         if (file.isEmpty()
-                || (!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "png"))
-                && (!FilenameUtils.getExtension(file.getOriginalFilename()).equals("jpg"))
-                && (!FilenameUtils.getExtension(file.getOriginalFilename()).equals("jpeg"))
-                && (!FilenameUtils.getExtension(file.getOriginalFilename()).equals("gif"))
-                && (!FilenameUtils.getExtension(file.getOriginalFilename()).equals("svg"))) {
+                || ((!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "png"))
+                && (!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "jpg"))
+                && (!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "jpeg"))
+                && (!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "gif"))
+                && (!Objects.equals(FilenameUtils.getExtension(file.getOriginalFilename()), "svg")))) {
             throw new HttpClientErrorException(HttpStatus.BAD_REQUEST, "검증 오류");
         }
         String fileName = StringUtils.cleanPath(

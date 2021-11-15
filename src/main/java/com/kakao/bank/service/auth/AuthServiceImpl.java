@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Optional;
+
 @RequiredArgsConstructor
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -63,6 +65,8 @@ public class AuthServiceImpl implements AuthService{
         if (file == null) {
             fileName = "default.png";
         } else {
+            System.out.println(file.getOriginalFilename());
+            System.out.println(file.getContentType());
             fileName = fileService.storeFile(file);
         }
         userRepo.save(registerReqDto.toEntity(serverAddress + "/file/" + fileName));

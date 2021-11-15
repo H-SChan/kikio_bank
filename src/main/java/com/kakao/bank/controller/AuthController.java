@@ -41,18 +41,10 @@ public class AuthController {
      * @return httpCode, message, boolean
      */
     @ApiOperation("아이디 중복 확인")
-    @PostMapping("/available/id")
-    public ResponseData<AvailableIdRo> availableId(@RequestBody String id) {
-        AvailableIdRo data;
-        if (Boolean.TRUE.equals(authService.duplicateIdVerification(id))) {
-            data = new AvailableIdRo(true);
-
-            return new ResponseData<>(HttpStatus.OK.value(), "사용 가능", data);
-        } else {
-            data = new AvailableIdRo(false);
-
-            return new ResponseData<>(HttpStatus.OK.value(), "사용 불가", data);
-        }
+    @PostMapping("/available/id/{id}")
+    public ResponseData<AvailableIdRo> availableId(@PathVariable String id) {
+        AvailableIdRo data = new AvailableIdRo(authService.duplicateIdVerification(id));
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
 
     /**
