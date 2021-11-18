@@ -4,6 +4,7 @@ import com.kakao.bank.domain.dto.user.request.SelfCertificationDto;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.repository.UserRepo;
+import com.kakao.bank.domain.response.user.SimpleUserInfoDto;
 import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.UserFinder;
 import com.kakao.bank.service.file.FileService;
@@ -96,5 +97,16 @@ public class UserServiceImpl implements UserService {
 
         return user.getName().equals(selfCertificationDto.getName()) &&
                 user.getResidentRegistrationNumber().equals(selfCertificationDto.getRRM());
+    }
+
+    /**
+     * 유저의 프로필 이미지와 이름 보기
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public SimpleUserInfoDto getUserSimpleInfo(String userId) {
+        User user = userFinder.getUser(userId);
+
+        return new SimpleUserInfoDto(user);
     }
 }

@@ -5,6 +5,7 @@ import com.kakao.bank.domain.dto.user.request.SimpleCertify;
 import com.kakao.bank.domain.dto.user.request.UserProfileInfo;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.ResponseData;
+import com.kakao.bank.domain.response.user.SimpleUserInfoDto;
 import com.kakao.bank.service.user.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -89,5 +90,17 @@ public class UserController {
      */
     private String extractUserIdFromToken(HttpServletRequest request) {
         return (String) request.getAttribute("userId");
+    }
+
+    /**
+     * 유저의 프로필 이미지와 이름 보기
+     */
+    @ApiOperation("유저의 프로필 이미지와 이름 보기")
+    @GetMapping
+    public ResponseData<SimpleUserInfoDto> getUserSimpleInfo(HttpServletRequest request) {
+        String userId = extractUserIdFromToken(request);
+        SimpleUserInfoDto data = userService.getUserSimpleInfo(userId);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
 }
