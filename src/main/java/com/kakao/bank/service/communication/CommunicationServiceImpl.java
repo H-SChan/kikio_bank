@@ -117,55 +117,74 @@ public class CommunicationServiceImpl implements CommunicationService {
         return account.getPassword().equals(dto.getPassword());
     }
 
+    /**
+     * 송금
+     */
+//    @Override
+//    @Transactional
+//    public void remittance()
+
     public List<BroughtAccountDto> getMaaguAccount(String phoneNumber) throws ParseException {
-        List<BroughtAccountDto> list = new ArrayList<>();
+        try {
+            List<BroughtAccountDto> list = new ArrayList<>();
 
-        String url = maaguAddress + "/account/find/" + phoneNumber;
-        String res = restTemplate.getForObject(url, String.class);
+            String url = maaguAddress + "/account/find/" + phoneNumber;
+            String res = restTemplate.getForObject(url, String.class);
 
-        JSONObject jsonObj = (JSONObject) jsonParser.parse(res);
-        JSONObject data = (JSONObject) jsonObj.get("data");
-        JSONArray accountDatum = (JSONArray) data.get("account");
+            JSONObject jsonObj = (JSONObject) jsonParser.parse(res);
+            JSONObject data = (JSONObject) jsonObj.get("data");
+            JSONArray accountDatum = (JSONArray) data.get("account");
 
-        for (Object o : accountDatum) {
-            JSONObject accountData = (JSONObject) o;
+            for (Object o : accountDatum) {
+                JSONObject accountData = (JSONObject) o;
 
-            String accountNum = (String) accountData.get("accountNum");
-            String nickName = (String) accountData.get("name");
-            String password = (String) accountData.get("password");
-            Long money = (Long) accountData.get("pay");
-            BroughtAccountDto account = new BroughtAccountDto(
-                    accountNum,
-                    nickName,
-                    money,
-                    password,
-                    Bank.MAAGU
-            );
-            list.add(account);
+                String accountNum = (String) accountData.get("accountNum");
+                String nickName = (String) accountData.get("name");
+                String password = (String) accountData.get("password");
+                Long money = (Long) accountData.get("pay");
+                BroughtAccountDto account = new BroughtAccountDto(
+                        accountNum,
+                        nickName,
+                        money,
+                        password,
+                        Bank.MAAGU
+                );
+                list.add(account);
+            }
+
+            return list;
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+            log.error(e.getMessage());
+            return Collections.emptyList();
         }
-
-        return list;
     }
 
     public List<BroughtAccountDto> getTossAccount(String phoneNumber) throws ParseException {
-        List<BroughtAccountDto> list = new ArrayList<>();
+        try {
+            List<BroughtAccountDto> list = new ArrayList<>();
 
-        String url = tossAddress + "/account/" + phoneNumber;
-        String res = restTemplate.getForObject(url, String.class);
+            String url = tossAddress + "/account/" + phoneNumber;
+            String res = restTemplate.getForObject(url, String.class);
 
-        JSONArray jsonObj = (JSONArray) jsonParser.parse(res);
+            JSONArray jsonObj = (JSONArray) jsonParser.parse(res);
 
-        for (Object o : jsonObj) {
-            JSONObject accountData = (JSONObject) o;
+            for (Object o : jsonObj) {
+                JSONObject accountData = (JSONObject) o;
 
-            String name = (String) accountData.get("name");
-            Long money = (Long) accountData.get("money");
-            String accountNumber = accountData.get("accountNumber").toString();
+                String name = (String) accountData.get("name");
+                Long money = (Long) accountData.get("money");
+                String accountNumber = accountData.get("accountNumber").toString();
 
-            BroughtAccountDto account = new BroughtAccountDto(accountNumber, name, money, null, Bank.TOSS);
-            list.add(account);
+                BroughtAccountDto account = new BroughtAccountDto(accountNumber, name, money, null, Bank.TOSS);
+                list.add(account);
+            }
+            return list;
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+            log.error(e.getMessage());
+            return Collections.emptyList();
         }
-        return list;
     }
 
     public List<BroughtAccountDto> getKBankAccount(String phoneNumber) throws ParseException {
@@ -175,16 +194,17 @@ public class CommunicationServiceImpl implements CommunicationService {
             String url = kBankAddress + "/api/open/accounts/" + phoneNumber;
             String res = restTemplate.getForObject(url, String.class);
 
-            JSONArray jsonObj = (JSONArray) jsonParser.parse(res);
+            JSONObject jsonObj = (JSONObject) jsonParser.parse(res);
+            JSONArray jsonArray = (JSONArray) jsonObj.get("accounts");
 
-            for (Object o : jsonObj) {
+            for (Object o : jsonArray) {
                 JSONObject accountData = (JSONObject) o;
 
-                String accountNumber = (String) accountData.get("ID");
-                JSONObject accountNickname = (JSONObject) accountData.get("AccountNickname");
+                String accountNumber = (String) accountData.get("id");
+                JSONObject accountNickname = (JSONObject) accountData.get("account_nickname");
                 String name = (String) accountNickname.get("String");
-                Long money = (Long) accountData.get("Balance");
-                String password = (String) accountData.get("Password");
+                Long money = (Long) accountData.get("balance");
+                String password = (String) accountData.get("password");
 
                 BroughtAccountDto account = new BroughtAccountDto(
                         accountNumber,
