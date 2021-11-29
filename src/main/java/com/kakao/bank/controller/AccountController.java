@@ -3,6 +3,7 @@ package com.kakao.bank.controller;
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
 import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
+import com.kakao.bank.domain.enums.Bank;
 import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.ResponseData;
 import com.kakao.bank.domain.response.account.AccountRo;
@@ -79,6 +80,14 @@ public class AccountController {
         accountService.storeAccount(storeAccountDto, userId);
 
         return new Response(HttpStatus.OK.value(), "성공");
+    }
+
+    @ApiOperation("은행 종류 받기")
+    @GetMapping("/kind/bank")
+    public ResponseData<List<Bank>> getKindOfBanks() {
+        List<Bank> data = accountService.getKindOfBanks();
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
     }
 
 }

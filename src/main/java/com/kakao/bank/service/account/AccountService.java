@@ -5,6 +5,7 @@ import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.entity.Account;
 import com.kakao.bank.domain.entity.User;
+import com.kakao.bank.domain.enums.Bank;
 import com.kakao.bank.domain.enums.Purpose;
 import com.kakao.bank.domain.response.account.AccountRo;
 import com.kakao.bank.domain.response.account.DetailAccountRo;
@@ -31,4 +32,6 @@ public interface AccountService {
 
     @Transactional
     void storeAccount(StoreAccountDto storeAccountDto, String userId);
+
+    List<Bank> getKindOfBanks();
 }

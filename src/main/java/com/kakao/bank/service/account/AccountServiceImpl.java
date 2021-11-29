@@ -224,6 +224,21 @@ public class AccountServiceImpl implements AccountService {
         accountRepo.save(account);
     }
 
+    /**
+     * 은행 종류 받기
+     */
+    @Override
+    public List<Bank> getKindOfBanks() {
+        List<Bank> response = new ArrayList<>();
+        response.add(Bank.KAKAO);
+        response.add(Bank.DAEGU);
+        response.add(Bank.MAAGU);
+        response.add(Bank.TOSS);
+        response.add(Bank.KBANK);
+
+        return response;
+    }
+
     private Account getAccount(Long accountIdx) {
         return accountRepo.getById(accountIdx);
     }
