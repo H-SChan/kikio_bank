@@ -2,9 +2,14 @@ package com.kakao.bank.service.communication;
 
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
+import com.kakao.bank.domain.dto.communication.DepositDto;
 import com.kakao.bank.domain.entity.Account;
+import com.kakao.bank.domain.entity.AccountRecord;
 import com.kakao.bank.domain.entity.User;
 import com.kakao.bank.domain.enums.Bank;
+import com.kakao.bank.domain.enums.Purpose;
+import com.kakao.bank.domain.repository.AccountRecordRepo;
+import com.kakao.bank.domain.repository.AccountRepo;
 import com.kakao.bank.domain.repository.UserRepo;
 import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
@@ -35,6 +40,8 @@ public class CommunicationServiceImpl implements CommunicationService {
     private final AccountFinder accountFinder;
 
     private final UserRepo userRepo;
+    private final AccountRecordRepo accountRecordRepo;
+    private final AccountRepo accountRepo;
 
     @Value("${this.server.address}")
     private String thisAddress;
@@ -123,6 +130,35 @@ public class CommunicationServiceImpl implements CommunicationService {
 //    @Override
 //    @Transactional
 //    public void remittance()
+
+    /**
+     * 입금
+     */
+    @Override
+    @Transactional
+    public void deposit(DepositDto depositDto) {
+        Account account = accountFinder.accountNumber(depositDto.getAccountNumber());
+        if (account.getPassword().equals(depositDto.getPassword())) {
+            AccountRecord accountRecord = new AccountRecord(
+                    depositDto.getMoney(),
+                    Purpose.DEPOSIT,
+                    depositDto.getName(),
+                    account
+            );
+            accountRecordRepo.save(accountRecord);
+            Account saveAccount = Account.builder()
+                    .idx(account.getIdx())
+                    .accountNumber(account.getAccountNumber())
+                    .money(account.getMoney() + depositDto.getMoney())
+                    .password(account.getPassword())
+                    .bank(account.getBank())
+                    .nickname(account.getNickname())
+                    .user(account.getUser())
+                    .build();
+            saveAccount.getAccountRecords().add(accountRecord);
+            accountRepo.save(saveAccount);
+        } else throw new CustomException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다.");
+    }
 
     public List<BroughtAccountDto> getMaaguAccount(String phoneNumber) throws ParseException {
         try {
