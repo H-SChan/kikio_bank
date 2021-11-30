@@ -2,12 +2,15 @@ package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.GetAccountListDto;
 import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
+import com.kakao.bank.domain.dto.communication.DepositDto;
+import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.service.communication.CommunicationService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -50,5 +53,13 @@ public class CommunicationController {
     @GetMapping("/check/accountPw")
     public Boolean checkAccountPassword(@RequestBody CheckAccountPasswordDto checkAccountPasswordDto) {
         return communicationService.checkPassword(checkAccountPasswordDto);
+    }
+
+    @ApiOperation("입금")
+    @PatchMapping("/deposit")
+    public Response deposit(@RequestBody DepositDto depositDto) {
+        communicationService.deposit(depositDto);
+
+        return new Response(HttpStatus.OK.value(), "성공");
     }
 }

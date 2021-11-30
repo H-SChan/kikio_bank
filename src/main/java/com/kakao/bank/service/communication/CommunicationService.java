@@ -2,6 +2,7 @@ package com.kakao.bank.service.communication;
 
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
+import com.kakao.bank.domain.dto.communication.DepositDto;
 import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,4 +20,7 @@ public interface CommunicationService {
 
     @Transactional(readOnly = true)
     Boolean checkPassword(CheckAccountPasswordDto dto);
+
+    @Transactional
+    void deposit(DepositDto depositDto);
 }

@@ -40,4 +40,11 @@ public class AccountRecord {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id")
     private Account account;
+
+    public AccountRecord(Long money, Purpose usingType, String name, Account account) {
+        this.money = money;
+        this.usingType = usingType;
+        this.name = name;
+        this.account = account;
+    }
 }
