@@ -6,7 +6,9 @@ import lombok.Setter;
 
 @Getter @Setter
 public class RemittanceDto {
-    private Bank bank;
-    private Long money;
+    private Bank toBank;
+    private Long toMoney;
     private String toName;
+    private String toAccountNumber;
+    private String fromAccountNumber;
 }
