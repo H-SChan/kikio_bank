@@ -16,7 +16,9 @@ import com.kakao.bank.domain.response.communication.CheckAccountNumRo;
 import com.kakao.bank.domain.response.communication.GetAccountListRo;
 import com.kakao.bank.exception.CustomException;
 import com.kakao.bank.lib.AccountFinder;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -64,6 +66,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
     /**
      * 사용자의 계좌 찾기
+     *
      * @return list < accountNumber, money, password, nickname >
      */
     @Override
@@ -84,6 +87,7 @@ public class CommunicationServiceImpl implements CommunicationService {
 
     /**
      * 있는 계좌번호인지 확인
+     *
      * @return Name of the account holder
      */
     @Override
@@ -133,6 +137,11 @@ public class CommunicationServiceImpl implements CommunicationService {
     public void remittance(RemittanceDto remittanceDto) {
         try {
             // 다른 서버와 통신
+            if (remittanceDto.getToBank() == Bank.TOSS) {
+                this.remittanceToToss(remittanceDto);
+            } else if (remittanceDto.getToBank() == Bank.MAAGU) {
+                this.remittanceToMaagu(remittanceDto);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
@@ -146,40 +155,39 @@ public class CommunicationServiceImpl implements CommunicationService {
     @Transactional
     public void deposit(DepositDto depositDto) {
         Account account = accountFinder.accountNumber(depositDto.getAccountNumber());
-        if (account.getPassword().equals(depositDto.getPassword())) {
-            AccountRecord accountRecord = new AccountRecord(
-                    depositDto.getMoney(),
-                    Purpose.DEPOSIT,
-                    depositDto.getName(),
-                    account
-            );
-            accountRecordRepo.save(accountRecord);
-            Account saveAccount = Account.builder()
-                    .idx(account.getIdx())
-                    .accountNumber(account.getAccountNumber())
-                    .money(account.getMoney() + depositDto.getMoney())
-                    .password(account.getPassword())
-                    .bank(account.getBank())
-                    .nickname(account.getNickname())
-                    .user(account.getUser())
-                    .build();
-            saveAccount.getAccountRecords().add(accountRecord);
-            accountRepo.save(saveAccount);
-        } else throw new CustomException(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다.");
+        AccountRecord accountRecord = new AccountRecord(
+                depositDto.getMoney(),
+                Purpose.DEPOSIT,
+                depositDto.getName(),
+                account
+        );
+        accountRecordRepo.save(accountRecord);
+        Account saveAccount = Account.builder()
+                .idx(account.getIdx())
+                .accountNumber(account.getAccountNumber())
+                .money(account.getMoney() + depositDto.getMoney())
+                .password(account.getPassword())
+                .bank(account.getBank())
+                .nickname(account.getNickname())
+                .user(account.getUser())
+                .accountRecords(account.getAccountRecords())
+                .build();
+        saveAccount.getAccountRecords().add(accountRecord);
+        accountRepo.save(saveAccount);
     }
 
     public List<BroughtAccountDto> getMaaguAccount(String phoneNumber) throws ParseException {
         try {
             List<BroughtAccountDto> list = new ArrayList<>();
 
-            String url = maaguAddress + "/account/find/" + phoneNumber;
+            String url = maaguAddress + "/account/find/phone/" + phoneNumber;
             String res = restTemplate.getForObject(url, String.class);
 
             JSONObject jsonObj = (JSONObject) jsonParser.parse(res);
-            JSONObject data = (JSONObject) jsonObj.get("data");
-            JSONArray accountDatum = (JSONArray) data.get("account");
+            JSONArray data = (JSONArray) jsonObj.get("data");
+//            JSONArray accountDatum = (JSONArray) data.get("account");
 
-            for (Object o : accountDatum) {
+            for (Object o : data) {
                 JSONObject accountData = (JSONObject) o;
 
                 String accountNum = (String) accountData.get("accountNum");
@@ -264,5 +272,53 @@ public class CommunicationServiceImpl implements CommunicationService {
             log.warn(e.getLocalizedMessage());
         }
         return Collections.emptyList();
+    }
+
+    private void remittanceToToss(RemittanceDto remittanceDto) {
+        try {
+            String url = tossAddress + "/account/receive";
+            @Getter
+            @Setter
+            class TossRemittanceDto {
+                private String sendAccountNumber;
+                private String receiveAccountNumber;
+                private Long money;
+
+                public TossRemittanceDto(RemittanceDto dto) {
+                    this.sendAccountNumber = dto.getFromAccountNumber();
+                    this.receiveAccountNumber = dto.getToAccountNumber();
+                    this.money = dto.getToMoney();
+                }
+            }
+            String res = restTemplate.postForObject(url, new TossRemittanceDto(remittanceDto), String.class);
+            log.info(res);
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+            log.error(e.getMessage());
+        }
+    }
+
+    private void remittanceToMaagu(RemittanceDto remittanceDto) {
+        try {
+            String url = maaguAddress + "/transaction/receive";
+            @Getter
+            @Setter
+            class MaaguRemittanceDto {
+                private String sendAccountNum;
+                private String receiveAccountNum;
+                private Long receivePay;
+
+                public MaaguRemittanceDto(RemittanceDto dto) {
+                    this.sendAccountNum = dto.getFromAccountNumber();
+                    this.receiveAccountNum = dto.getToAccountNumber();
+                    this.receivePay = dto.getToMoney();
+                }
+            }
+            String res = restTemplate.postForObject(url, new MaaguRemittanceDto(remittanceDto), String.class);
+            log.info(res);
+        } catch (Exception e) {
+            log.error(e.getLocalizedMessage());
+            log.error(e.getMessage());
+        }
     }
 }

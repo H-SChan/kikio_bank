@@ -8,7 +8,8 @@ import lombok.Setter;
 public class RemittanceDto {
     private Bank toBank;
     private Long toMoney;
-    private String toName;
+    // 보낼 계좌
     private String toAccountNumber;
+    // 내 계좌
     private String fromAccountNumber;
 }

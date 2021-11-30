@@ -250,13 +250,13 @@ public class AccountServiceImpl implements AccountService {
         User user = userFinder.getUser(userId);
         // 수수료
         long fee;
-        if (this.parseBank(remittanceDto.getFromAccountNumber()) == Bank.KAKAO) {
+        if (this.parseBank(remittanceDto.getToAccountNumber()) == Bank.KAKAO) {
             fee = 0L;
         } else {
             fee = 500L;
         }
         // 잔액
-        long balance = account.getMoney() - fee;
+        long balance = account.getMoney() - fee - remittanceDto.getToMoney();
         if (balance < 0) {
             throw new CustomException(HttpStatus.FORBIDDEN, "잔액이 부족합니다.");
         }
