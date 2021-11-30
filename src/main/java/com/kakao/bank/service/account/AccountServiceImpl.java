@@ -1,6 +1,7 @@
 package com.kakao.bank.service.account;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
+import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
@@ -239,6 +240,48 @@ public class AccountServiceImpl implements AccountService {
         return response;
     }
 
+    /**
+     * 송금
+     */
+    @Override
+    @Transactional
+    public void remittance(RemittanceDto remittanceDto, String userId) {
+        Account account = accountFinder.accountNumber(remittanceDto.getFromAccountNumber());
+        User user = userFinder.getUser(userId);
+        // 수수료
+        long fee;
+        if (this.parseBank(remittanceDto.getFromAccountNumber()) == Bank.KAKAO) {
+            fee = 0L;
+        } else {
+            fee = 500L;
+        }
+        // 잔액
+        long balance = account.getMoney() - fee;
+        if (balance < 0) {
+            throw new CustomException(HttpStatus.FORBIDDEN, "잔액이 부족합니다.");
+        }
+        communicationService.remittance(remittanceDto);
+        AccountRecord accountRecord = new AccountRecord(
+                remittanceDto.getToMoney(),
+                Purpose.WITHDRAWAL,
+                account.getUser().getName(),
+                account
+        );
+        account.getAccountRecords().add(accountRecord);
+        accountRecordRepo.save(accountRecord);
+        Account saveAccount = Account.builder()
+                .idx(account.getIdx())
+                .accountNumber(account.getAccountNumber())
+                .money(balance)
+                .password(account.getPassword())
+                .bank(account.getBank())
+                .nickname(account.getNickname())
+                .user(user)
+                .build();
+        accountRepo.save(saveAccount);
+    }
+
+
     private Account getAccount(Long accountIdx) {
         return accountRepo.getById(accountIdx);
     }
@@ -262,6 +305,18 @@ public class AccountServiceImpl implements AccountService {
                 account.getAccountNumber().getBytes(StandardCharsets.UTF_8),
                 0,
                 3);
+        return getBank(bankNum);
+    }
+
+    private Bank parseBank(String accountNumber) {
+        String bankNum = new String(
+                accountNumber.getBytes(StandardCharsets.UTF_8),
+                0,
+                3);
+        return getBank(bankNum);
+    }
+
+    private Bank getBank(String bankNum) {
         if (bankNum.equals(Bank.KAKAO.getBankNum())) {
             return Bank.KAKAO;
         } else if (bankNum.equals(Bank.DAEGU.getBankNum())) {

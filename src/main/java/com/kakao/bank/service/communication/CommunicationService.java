@@ -1,5 +1,6 @@
 package com.kakao.bank.service.communication;
 
+import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
 import com.kakao.bank.domain.dto.communication.DepositDto;
@@ -20,6 +21,9 @@ public interface CommunicationService {
 
     @Transactional(readOnly = true)
     Boolean checkPassword(CheckAccountPasswordDto dto);
+
+    @Transactional
+    void remittance(RemittanceDto remittanceDto);
 
     @Transactional
     void deposit(DepositDto depositDto);

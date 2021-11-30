@@ -1,5 +1,6 @@
 package com.kakao.bank.service.communication;
 
+import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
 import com.kakao.bank.domain.dto.communication.CheckAccountPasswordDto;
 import com.kakao.bank.domain.dto.communication.DepositDto;
@@ -127,9 +128,16 @@ public class CommunicationServiceImpl implements CommunicationService {
     /**
      * 송금
      */
-//    @Override
-//    @Transactional
-//    public void remittance()
+    @Override
+    @Transactional
+    public void remittance(RemittanceDto remittanceDto) {
+        try {
+            // 다른 서버와 통신
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(HttpStatus.INTERNAL_SERVER_ERROR, "서버 오류");
+        }
+    }
 
     /**
      * 입금

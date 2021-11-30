@@ -1,6 +1,7 @@
 package com.kakao.bank.service.account;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
+import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.entity.Account;
@@ -34,4 +35,7 @@ public interface AccountService {
     void storeAccount(StoreAccountDto storeAccountDto, String userId);
 
     List<Bank> getKindOfBanks();
+
+    @Transactional
+    void remittance(RemittanceDto remittanceDto, String userId);
 }

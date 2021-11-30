@@ -1,6 +1,7 @@
 package com.kakao.bank.controller;
 
 import com.kakao.bank.domain.dto.account.request.OpeningAccountDto;
+import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.enums.Bank;
@@ -88,6 +89,16 @@ public class AccountController {
         List<Bank> data = accountService.getKindOfBanks();
 
         return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
+    }
+
+    @ApiOperation("송금")
+    @PostMapping("/remittance")
+    public Response remittance(@RequestBody RemittanceDto remittanceDto,
+                               HttpServletRequest request) {
+        String userId = (String) request.getAttribute("userId");
+        accountService.remittance(remittanceDto, userId);
+
+        return new Response(HttpStatus.OK.value(), "성공");
     }
 
 }
