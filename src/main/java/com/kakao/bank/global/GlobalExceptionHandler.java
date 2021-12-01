@@ -4,6 +4,7 @@ import com.kakao.bank.domain.response.Response;
 import com.kakao.bank.exception.CustomException;
 import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
+
+import java.sql.SQLException;
 
 @Slf4j
 @RestControllerAdvice
@@ -86,7 +89,15 @@ public class GlobalExceptionHandler {
         log.warn("httpMessageNotReadableExceptionHandler()");
         log.warn(e.getLocalizedMessage());
 
-        Response response = new Response(HttpStatus.OK.value(), e.getLocalizedMessage());
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), e.getLocalizedMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Response> dataIntegrityViolationExceptionHandler(DataIntegrityViolationException e) {
+        log.warn("dataIntegrityViolationExceptionHandler()");
+
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(), "중복된 값");
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
