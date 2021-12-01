@@ -5,6 +5,7 @@ import com.kakao.bank.domain.dto.account.request.RemittanceDto;
 import com.kakao.bank.domain.dto.account.request.StoreAccountDto;
 import com.kakao.bank.domain.dto.account.request.TakeMoneyDto;
 import com.kakao.bank.domain.dto.communication.BroughtAccountDto;
+import com.kakao.bank.domain.dto.communication.DepositDto;
 import com.kakao.bank.domain.entity.Account;
 import com.kakao.bank.domain.entity.AccountRecord;
 import com.kakao.bank.domain.entity.User;
@@ -147,7 +148,7 @@ public class AccountServiceImpl implements AccountService {
                 Purpose.DEPOSIT,
                 toAccount,
                 user,
-                toAccount.getMoney() + balance
+                toAccount.getMoney() + takeMoneyDto.getMoney()
         );
     }
 
@@ -180,6 +181,7 @@ public class AccountServiceImpl implements AccountService {
                 .bank(account.getBank())
                 .password(account.getPassword())
                 .user(user)
+                .nickname(account.getNickname())
                 .build();
         accountRepo.save(accountSave);
     }
@@ -260,7 +262,16 @@ public class AccountServiceImpl implements AccountService {
         if (balance < 0) {
             throw new CustomException(HttpStatus.FORBIDDEN, "잔액이 부족합니다.");
         }
-        communicationService.remittance(remittanceDto);
+        if (this.parseBank(remittanceDto.getToAccountNumber()) != Bank.KAKAO) {
+            communicationService.remittance(remittanceDto);
+        } else {
+            DepositDto depositDto = new DepositDto(
+                    remittanceDto.getToAccountNumber(),
+                    user.getName(),
+                    remittanceDto.getToMoney()
+            );
+            communicationService.deposit(depositDto);
+        }
         AccountRecord accountRecord = new AccountRecord(
                 remittanceDto.getToMoney(),
                 Purpose.WITHDRAWAL,
