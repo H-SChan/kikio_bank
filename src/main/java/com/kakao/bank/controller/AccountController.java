@@ -101,4 +101,12 @@ public class AccountController {
         return new Response(HttpStatus.OK.value(), "성공");
     }
 
+    @ApiOperation("계좌 비밀번호 체크")
+    @GetMapping("/check/{accountNumber}")
+    public ResponseData<Boolean> checkPassword(@PathVariable String accountNumber, @RequestParam String password) {
+        Boolean data = accountService.checkPassword(accountNumber, password);
+
+        return new ResponseData<>(HttpStatus.OK.value(), "성공", data);
+    }
+
 }

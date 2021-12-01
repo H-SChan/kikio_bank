@@ -38,4 +38,7 @@ public interface AccountService {
 
     @Transactional
     void remittance(RemittanceDto remittanceDto, String userId);
+
+    @Transactional(readOnly = true)
+    Boolean checkPassword(String accountNum, String password);
 }

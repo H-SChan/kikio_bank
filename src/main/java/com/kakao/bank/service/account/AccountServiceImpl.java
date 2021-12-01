@@ -281,6 +281,13 @@ public class AccountServiceImpl implements AccountService {
         accountRepo.save(saveAccount);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public Boolean checkPassword(String accountNum, String password) {
+        Account account = accountFinder.accountNumber(accountNum);
+        return account.getPassword().equals(password);
+    }
+
 
     private Account getAccount(Long accountIdx) {
         return accountRepo.getById(accountIdx);
