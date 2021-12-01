@@ -6,8 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.json.simple.parser.ParseException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpClientErrorException;
@@ -66,5 +68,25 @@ public class GlobalExceptionHandler {
 
         Response response = new Response(HttpStatus.INTERNAL_SERVER_ERROR.value(), "서버 오류");
         return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Response> validationExceptionHandler(MethodArgumentNotValidException e) {
+        log.warn("validationExceptionHandler()");
+        log.warn(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+
+        Response response = new Response(HttpStatus.BAD_REQUEST.value(),
+                e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<Response> httpMessageNotReadableExceptionHandler(HttpMessageNotReadableException e) {
+        log.warn("httpMessageNotReadableExceptionHandler()");
+        log.warn(e.getLocalizedMessage());
+
+        Response response = new Response(HttpStatus.OK.value(), e.getLocalizedMessage());
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }

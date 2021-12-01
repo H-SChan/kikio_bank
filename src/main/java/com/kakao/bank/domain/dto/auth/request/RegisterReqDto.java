@@ -25,6 +25,7 @@ public class RegisterReqDto {
 
     private String nickname;
 
+    @Pattern(regexp = "^[0-9]*$", message = "숫자만 입력 가능 합니다.")
     private Integer simpleNumber;
 
     public User toEntity(String img) {
