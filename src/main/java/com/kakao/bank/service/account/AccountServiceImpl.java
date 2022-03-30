@@ -290,6 +290,14 @@ public class AccountServiceImpl implements AccountService {
                 .user(user)
                 .build();
         accountRepo.save(saveAccount);
+        Account account1 = accountFinder.accountNumber(remittanceDto.getToAccountNumber());
+        saveAccountAndRecord(
+                remittanceDto.getToMoney(),
+                Purpose.DEPOSIT,
+                account1 ,
+                user,
+                account1.getMoney() + remittanceDto.getToMoney()
+        );
     }
 
     @Override

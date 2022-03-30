@@ -268,7 +268,7 @@ public class CommunicationServiceImpl implements CommunicationService {
                 list.add(account);
             }
             return list;
-        } catch (ResourceAccessException e) {
+        } catch (ResourceAccessException | NullPointerException e) {
             log.warn(e.getLocalizedMessage());
         }
         return Collections.emptyList();
