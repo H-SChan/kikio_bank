@@ -16,7 +16,7 @@ class JwtTest {
      */
     @Test
     void createToken() {
-        String id = "qewr1234";
+        String id = "1234adf";
 
         String token = jwtService.createToken(id);
 
